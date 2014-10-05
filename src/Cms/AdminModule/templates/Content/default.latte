@@ -1,0 +1,117 @@
+{define header}
+	{include ../#header.latte}
+{/define}
+
+{define toolbar}
+{/define}
+
+{block breadcrumb}
+	{include #parent}
+	<li class="active">{include #header}</li>
+{/block}
+
+{block content}
+
+{control table}
+
+<script type="text/javascript">
+	$(function () {
+		$('html').append('<script src="{path @venne.cms/vendor/ckeditor/ckeditor.js}"><\/script>');
+		CKEDITOR.plugins.add('simplebox', {
+			requires: 'widget',
+			icons: 'simplebox',
+			init: function (editor) {
+				editor.widgets.add('simplebox', {
+					button: 'Create a simple box',
+					template:
+					'<div class="venne-cms-snippet">' +
+						'<h2 class="venne-cms-snippet-key">Key</h2>' +
+						'<div class="venne-cms-snippet-content"><p>Content...</p></div>' +
+					'</div>',
+					editables: {
+						title: {
+							selector: '.venne-cms-snippet-key',
+							allowedContent: '!*'
+						},
+						content: {
+							selector: '.venne-cms-snippet-content'
+						}
+					},
+					allowedContent:
+							'div(!venne-cms-snippet); div(!venne-cms-snippet-content); h2(!venne-cms-snippet-key)',
+					requiredContent: 'div(venne-cms-snippet)',
+					upcast: function( element ) {
+						return element.hasClass('venne-cms-snippet');
+					}
+				});
+			}
+		});
+
+		var $textarea = $('#frm-table-form-page-text');
+		$('html').append('<div style="display: none;" id="venne-cms-edit">' + $textarea.val() + '</div>');
+		var snippets = [];
+		$cmsEdit = $('#venne-cms-edit');
+		$('#venne-cms-edit [id^=venne-cms-content-]').each(function() {
+			var $this = $(this);
+			var id = $this.attr('id').substring(18);
+
+			snippets.push('<div class="venne-cms-snippet">' +
+			'<h2 class="venne-cms-snippet-key">' + id + '</h2>' +
+			'<div class="venne-cms-snippet-content">' + $this.html() + '</div>' +
+			'</div>');
+		});
+
+		snippets.forEach(function(html) {
+			$cmsEdit.append(html);
+		});
+
+		$('#venne-cms-edit [id^=venne-cms-content-]').remove();
+		$textarea.val($cmsEdit.html());
+		$cmsEdit.remove();
+
+		$('#frm-table-form-_submit').on('click', function (e) {
+			e.preventDefault();
+
+			for (instance in CKEDITOR.instances) {
+				CKEDITOR.instances[instance].updateElement();
+			}
+
+			$('html').append('<div style="display: none;" id="venne-cms-edit">' + $textarea.val() + '</div>');
+			$cmsEdit = $('#venne-cms-edit');
+
+			var data = '';
+			$('#venne-cms-edit .venne-cms-snippet').each(function() {
+				var $this = $(this);
+
+				data += '\n\n<div id="venne-cms-content-' +
+				$this.find('.venne-cms-snippet-key').html() + '">' +
+				$this.find('.venne-cms-snippet-content').html() +
+				'</div>';
+			});
+			$('#venne-cms-edit .venne-cms-snippet').remove();
+			$textarea.val($('#venne-cms-edit').html().trim() + data);
+			$cmsEdit.remove();
+		});
+
+		CKEDITOR.replace('frm-table-form-page-text', {
+				extraPlugins: 'simplebox',
+				extraAllowedContent: 'div(*)',
+				allowedContent: true
+		});
+		CKEDITOR.instanceCreated('instanceCreated', function (event) {
+			var editor = event.editor;
+			var element = editor.element;
+
+			//if ( element.is( 'h1', 'h2', 'h3' ) || element.getAttribute( 'id' ) == 'taglist' ) {
+			editor.on('configLoaded', function () {
+//					editor.config.toolbarGroups = [
+//						{ name: 'editing', groups: ['basicstyles', 'links']},
+//						{ name: 'undo'},
+//						{ name: 'clipboard', groups: ['selection', 'clipboard']},
+//						{ name: 'about'}
+//					];
+			});
+			//}
+		});
+	});
+</script>

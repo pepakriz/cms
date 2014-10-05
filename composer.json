@@ -1,0 +1,48 @@
+{
+	"name": "venne/cms",
+	"description": "Venne Content Management System",
+	"keywords": ["nette", "venne", "cms"],
+	"homepage": "http://venne.cz",
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"authors": [
+		{
+			"name": "Josef Kříž",
+			"homepage": "http://josef-kriz.cz"
+		}
+	],
+	"support": {
+		"email": "info@venne.cz",
+		"issues": "https://github.com/Venne/venne/issues"
+	},
+	"require": {
+		"php": ">=5.4.0",
+		"venne/venne": "~3.0.0"
+	},
+	"require-dev": {
+		"venne/tester": "~1.1.0",
+		"phing/phing": "~2.8.0",
+		"squizlabs/php_codesniffer": "~1.5.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Venne\\Cms\\": "src/Cms/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"VenneTests\\": "tests/src/"
+		}
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "3.0-dev"
+		},
+		"venne": {
+			"configuration": {
+				"extensions": {
+					"cms": "Venne\\Cms\\DI\\CmsExtension"
+				}
+			}
+		}
+	}
+}

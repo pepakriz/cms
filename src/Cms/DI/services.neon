@@ -1,0 +1,29 @@
+services:
+
+	- Venne\Cms\Listeners\ExtendedPageListener
+
+	- Venne\Cms\TemplateManager (%packages%)
+
+	- Venne\Cms\AdminModule\PageFormFactory (@system.admin.ajaxFormFactory)
+	- Venne\Cms\AdminModule\PageFormService
+	- Venne\Cms\AdminModule\PagesTableFactory
+
+	- Venne\Cms\PageService
+
+	- Venne\Cms\AdminModule\EditPresenter
+
+	- Venne\Cms\AdminModule\DomainFormFactory (@system.admin.ajaxFormFactory)
+	- Venne\Cms\AdminModule\DomainFormService
+	- Venne\Cms\AdminModule\DomainsTableFactory
+
+	- Venne\Cms\AdminModule\LanguageFormFactory (@system.admin.ajaxFormFactory)
+	- Venne\Cms\AdminModule\LanguageFormService
+	- Venne\Cms\AdminModule\LanguagesTableFactory
+
+	- Venne\Cms\AdminModule\LayoutFormFactory (@system.admin.ajaxFormFactory)
+	- Venne\Cms\AdminModule\LayoutFormService
+	- Venne\Cms\AdminModule\LayoutsTableFactory
+
+	- Venne\Cms\AdminModule\TagFormFactory (@system.admin.ajaxFormFactory)
+	- Venne\Cms\AdminModule\TagFormService
+	- Venne\Cms\AdminModule\TagsTableFactory

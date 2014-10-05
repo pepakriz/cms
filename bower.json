@@ -1,0 +1,8 @@
+{
+	"name": "venne-cms",
+	"version": "2.2.0",
+	"dependencies": {
+		"bootstrap": "~3.2.0",
+		"ckeditor": "4.4.4"
+	}
+}

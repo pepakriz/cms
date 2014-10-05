@@ -1,0 +1,12 @@
+<li n:if="$presenter->isAuthorized('Default:')"{if $presenter->isLinkCurrent('Default:')} class="active"{/if}>
+	<a class="ajax" href="{plink Default:}">{_'Domains'}</a>
+</li>
+<li n:if="$presenter->isAuthorized('Languages:')"{if $presenter->isLinkCurrent('Languages:')} class="active"{/if}>
+	<a class="ajax" href="{plink Languages:}">{_'Languages'}</a>
+</li>
+<li n:if="$presenter->isAuthorized('Layouts:')"{if $presenter->isLinkCurrent('Layouts:')} class="active"{/if}>
+	<a class="ajax" href="{plink Layouts:}">{_'Layouts'}</a>
+</li>
+<li n:if="$presenter->isAuthorized('Tags:')"{if $presenter->isLinkCurrent('Tags:')} class="active"{/if}>
+	<a class="ajax" href="{plink Tags:}">{_'Tags'}</a>
+</li>

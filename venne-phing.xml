@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="venne/cms" default="build">
+
+	<property name="path.venne.cms.builded" value="${path.venne.cms.root}/.builded"/>
+	<property name="path.venne.cms.bower.executable" value="bower"/>
+	<property name="path.venne.cms.npm.executable" value="npm"/>
+	<property name="path.venne.cms.grunt.executable" value="grunt"/>
+	<property name="path.venne.cms.tester.executable" value="${path.bin}/tester"/>
+	<property name="path.venne.cms.phpcs.executable" value="${path.bin}/phpcs"/>
+	<property name="path.venne.cms.root" value="${path.vendor}/venne/cms"/>
+	<property name="path.venne.cms.build" value="${path.venne.cms.root}/build"/>
+	<property name="path.venne.cms.src" value="${path.venne.cms.root}/src"/>
+	<property name="path.venne.cms.tests" value="${path.venne.cms.root}/tests"/>
+	<property name="path.venne.cms.phpcs.ruleset" value="${path.venne.cms.build}/ruleset.xml"/>
+
+	<target name="build">
+		<if>
+			<available file="${path.venne.cms.builded}" />
+			<then>
+			</then>
+			<else>
+				<exec
+						executable="${path.venne.cms.bower.executable}"
+						logoutput="true"
+						passthru="true"
+						checkreturn="true"
+						dir="${path.venne.cms.root}"
+						>
+					<arg value="install"/>
+				</exec>
+				<exec
+						executable="${path.venne.cms.npm.executable}"
+						logoutput="true"
+						passthru="true"
+						checkreturn="true"
+						dir="${path.venne.cms.root}"
+						>
+					<arg value="install"/>
+				</exec>
+				<exec
+						executable="${path.venne.cms.grunt.executable}"
+						logoutput="true"
+						passthru="true"
+						checkreturn="true"
+						dir="${path.venne.cms.root}"
+						>
+				</exec>
+				<touch file="${path.venne.cms.builded}" />
+			</else>
+		</if>
+	</target>
+
+	<target name="rebuild">
+		<delete file="${path.venne.cms.builded}" />
+		<phingcall target="build" />
+	</target>
+
+	<target name="check" depends="check-php,tester"/>
+
+	<target name="check-php" depends="phpcs"/>
+
+	<target name="phpcs">
+		<exec
+				executable="${path.venne.cms.phpcs.executable}"
+				logoutput="true"
+				passthru="true"
+				checkreturn="true"
+				>
+			<arg value="--standard=${path.venne.cms.phpcs.ruleset}"/>
+			<arg value="--extensions=php"/>
+			<arg value="--encoding=utf-8"/>
+			<arg value="--tab-width=4"/>
+			<arg value="-sp"/>
+			<arg path="${path.venne.cms.src}"/>
+		</exec>
+	</target>
+
+	<target name="tester">
+		<exec
+				executable="${path.venne.cms.tester.executable}"
+				logoutput="true"
+				passthru="true"
+				checkreturn="true"
+				>
+			<arg path="${path.venne.cms.tests}"/>
+			<arg value="-s"/>
+		</exec>
+	</target>
+
+</project>
