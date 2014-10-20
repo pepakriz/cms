@@ -272,13 +272,6 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	private $name;
 
 	/**
-	 * @var string
-	 *
-	 * @ORM\Column(type="string")
-	 */
-	private $optionString;
-
-	/**
 	 * @var string|null
 	 *
 	 * @ORM\Column(type="text", nullable=true)
@@ -474,10 +467,12 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	 */
 	public function getOptionString()
 	{
-		return $this->optionString;
+		$floor = substr_count($this->positionString, ';');
+
+		return $floor < 1
+			? $this->__toString()
+			: str_repeat('....', $floor - 1) . ($floor > 0 ? '+-..' : '') . $this->__toString();
 	}
-
-
 
 	/**
 	 * @param integer $change
@@ -485,7 +480,6 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	public function appendChange($change)
 	{
 		$this->changes |= $change;
-//		$this->onPreUpdate();
 	}
 
 	/**
@@ -1152,22 +1146,11 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 			$this->parent->setLocale($l);
 		}
 
-		$this->generateOptionString();
-
 		if ($recursively) {
 			foreach ($this->children as $child) {
 				$child->generateUrl();
 			}
 		}
-	}
-
-	private function generateOptionString()
-	{
-		$floor = substr_count($this->positionString, ';');
-
-		$this->optionString = $floor < 1
-			? $this->__toString()
-			: str_repeat('....', $floor - 1) . ($floor > 0 ? '+-..' : '') . $this->__toString();
 	}
 
 	/**

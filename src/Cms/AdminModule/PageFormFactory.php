@@ -12,6 +12,7 @@
 namespace Venne\Cms\AdminModule;
 
 use Kdyby\DoctrineForms\IComponentMapper;
+use Venne\Cms\Page;
 use Venne\Forms\IFormFactory;
 
 /**
@@ -58,7 +59,9 @@ class PageFormFactory implements \Venne\Forms\IFormFactory
 		$page->addSelect('parent', 'Parent')
 			->setTranslator()
 			->setPrompt('')
-			->setOption(IComponentMapper::ITEMS_TITLE, 'optionString')
+			->setOption(IComponentMapper::ITEMS_TITLE, function (Page $page) {
+				return $page->getOptionString();
+			})
 			->setOption(IComponentMapper::ITEMS_ORDER, array('positionString' => 'ASC'));
 
 		$page->addSelect('author', 'Author')
