@@ -40,8 +40,7 @@ class TagsTableFactory
 		TagFormService $tagFormService,
 		IAdminGridFactory $adminGridFactory,
 		ITranslator $translator
-	)
-	{
+	) {
 		$this->tagRepository = $entityManager->getRepository(Tag::class);
 		$this->tagFormService = $tagFormService;
 		$this->adminGridFactory = $adminGridFactory;

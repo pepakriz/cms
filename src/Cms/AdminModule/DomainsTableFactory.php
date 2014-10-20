@@ -40,8 +40,7 @@ class DomainsTableFactory
 		DomainFormService $domainFormService,
 		IAdminGridFactory $adminGridFactory,
 		ITranslator $translator
-	)
-	{
+	) {
 		$this->domainRepository = $entityManager->getRepository(Domain::class);
 		$this->domainFormService = $domainFormService;
 		$this->adminGridFactory = $adminGridFactory;

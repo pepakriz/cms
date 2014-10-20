@@ -27,8 +27,7 @@ class LanguageFormService extends \Venne\System\DoctrineFormService
 		LanguageFormFactory $langaugeFormFactory,
 		EntityManager $entityManager,
 		EntityFormMapper $entityFormMapper
-	)
-	{
+	) {
 		parent::__construct($langaugeFormFactory, $entityManager, $entityFormMapper);
 	}
 

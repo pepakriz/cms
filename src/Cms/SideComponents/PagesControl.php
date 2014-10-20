@@ -48,8 +48,7 @@ class PagesControl extends \Venne\System\UI\Control
 		IBrowserControlFactory $browserFactory,
 		PageFormFactory $pageFormFactory,
 		FormFactoryFactory $formFactoryFactory
-	)
-	{
+	) {
 		parent::__construct();
 
 		$this->entityManager = $entityManager;

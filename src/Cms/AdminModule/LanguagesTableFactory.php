@@ -40,8 +40,7 @@ class LanguagesTableFactory
 		LanguageFormService $languageFormService,
 		IAdminGridFactory $adminGridFactory,
 		ITranslator $translator
-	)
-	{
+	) {
 		$this->languageRepository = $entityManager->getRepository(Language::class);
 		$this->languageFormService = $languageFormService;
 		$this->adminGridFactory = $adminGridFactory;

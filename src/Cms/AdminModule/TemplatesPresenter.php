@@ -58,8 +58,7 @@ class TemplatesPresenter extends \Nette\Application\UI\Presenter
 		LayouteditFormFactory $layouteditForm,
 		OverloadFormFactory $overloadFormFactory,
 		Helpers $moduleHelpers
-	)
-	{
+	) {
 		$this->templateManager = $templateManager;
 		$this->layoutFormFactory = $layoutForm;
 		$this->layouteditFormFactory = $layouteditForm;
@@ -174,4 +173,5 @@ class TemplatesPresenter extends \Nette\Application\UI\Presenter
 	{
 		$this->template->templateManager = $this->templateManager;
 	}
+
 }

@@ -40,8 +40,7 @@ class PagesTableFactory
 		PageFormService $pageFormService,
 		IAdminGridFactory $adminGridFactory,
 		ITranslator $translator
-	)
-	{
+	) {
 		$this->pageRepository = $entityManager->getRepository(Page::class);
 		$this->pageFormService = $pageFormService;
 		$this->adminGridFactory = $adminGridFactory;

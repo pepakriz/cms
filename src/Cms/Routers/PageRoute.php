@@ -63,8 +63,7 @@ class PageRoute extends Route
 	public function __construct(
 		$routePrefix,
 		EntityManager $entityManager
-	)
-	{
+	) {
 		$this->pageRepository = $entityManager->getRepository(Page::class);
 		$this->languageRepository = $entityManager->getRepository(Language::class);
 		$this->domainRepository = $entityManager->getRepository(Domain::class);

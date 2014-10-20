@@ -11,15 +11,12 @@
 
 namespace Venne\Cms\DI;
 
-use Nette\DI\ContainerBuilder;
-use Nette\DI\Statement;
 use Venne\System\DI\SystemExtension;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
  */
-class CmsExtension extends \Nette\DI\CompilerExtension
-	implements
+class CmsExtension extends \Nette\DI\CompilerExtension implements
 	\Kdyby\Doctrine\DI\IEntityProvider,
 	\Venne\System\DI\IPresenterProvider,
 	\Kdyby\Translation\DI\ITranslationProvider
@@ -77,8 +74,6 @@ class CmsExtension extends \Nette\DI\CompilerExtension
 			->addTag(SystemExtension::TAG_ROUTE, array('priority' => 500));
 	}
 
-
-
 	/**
 	 * @return array
 	 */
@@ -88,7 +83,6 @@ class CmsExtension extends \Nette\DI\CompilerExtension
 			'Venne\Cms' => dirname(__DIR__) . '/*Entity.php',
 		);
 	}
-
 
 	/**
 	 * @return array
@@ -100,7 +94,6 @@ class CmsExtension extends \Nette\DI\CompilerExtension
 			'Front:TextPage' => 'Venne\Cms\*\FrontModule\*Presenter',
 		);
 	}
-
 
 	/**
 	 * @return array

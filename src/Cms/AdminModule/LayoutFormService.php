@@ -27,8 +27,7 @@ class LayoutFormService extends \Venne\System\DoctrineFormService
 		LayoutFormFactory $domainFormFactory,
 		EntityManager $entityManager,
 		EntityFormMapper $entityFormMapper
-	)
-	{
+	) {
 		parent::__construct($domainFormFactory, $entityManager, $entityFormMapper);
 	}
 

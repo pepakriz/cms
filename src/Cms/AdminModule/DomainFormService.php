@@ -27,8 +27,7 @@ class DomainFormService extends \Venne\System\DoctrineFormService
 		DomainFormFactory $domainFormFactory,
 		EntityManager $entityManager,
 		EntityFormMapper $entityFormMapper
-	)
-	{
+	) {
 		parent::__construct($domainFormFactory, $entityManager, $entityFormMapper);
 	}
 

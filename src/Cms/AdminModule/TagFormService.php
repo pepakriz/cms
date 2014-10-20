@@ -27,8 +27,7 @@ class TagFormService extends \Venne\System\DoctrineFormService
 		TagFormFactory $tagFormFactory,
 		EntityManager $entityManager,
 		EntityFormMapper $entityFormMapper
-	)
-	{
+	) {
 		parent::__construct($tagFormFactory, $entityManager, $entityFormMapper);
 	}
 

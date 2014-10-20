@@ -32,7 +32,6 @@ class DefaultPresenter extends Presenter
 		$this->tableFactory = $tableFactory;
 	}
 
-
 	protected function createComponentTable()
 	{
 		return $this->tableFactory->create();

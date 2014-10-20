@@ -40,8 +40,7 @@ class LayoutsTableFactory
 		LayoutFormService $layoutFormService,
 		IAdminGridFactory $adminGridFactory,
 		ITranslator $translator
-	)
-	{
+	) {
 		$this->layoutRepository = $entityManager->getRepository(Layout::class);
 		$this->layoutFormService = $layoutFormService;
 		$this->adminGridFactory = $adminGridFactory;

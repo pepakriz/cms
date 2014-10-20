@@ -27,8 +27,7 @@ class PageFormService extends \Venne\System\DoctrineFormService
 		PageFormFactory $pageFormFactory,
 		EntityManager $entityManager,
 		EntityFormMapper $entityFormMapper
-	)
-	{
+	) {
 		parent::__construct($pageFormFactory, $entityManager, $entityFormMapper);
 	}
 

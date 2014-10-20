@@ -103,4 +103,5 @@ class ContentMacro extends \Nette\Object implements IMacro
 	{
 		$compiler->addMacro('content', new static);
 	}
+
 }
