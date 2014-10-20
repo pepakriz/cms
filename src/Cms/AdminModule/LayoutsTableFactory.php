@@ -52,7 +52,6 @@ class LayoutsTableFactory
 	{
 		$admin = $this->adminGridFactory->create($this->layoutRepository);
 
-		// columns
 		$table = $admin->getTable();
 		$table->setTranslator($this->translator);
 
@@ -64,22 +63,22 @@ class LayoutsTableFactory
 			->setSortable()
 			->getCellPrototype()->width = '50%';
 
-		$table->addActionEvent('edit', 'Edit')
-			->getElementPrototype()->class[] = 'ajax';
-
 		$form = $admin->addForm('layout', 'Layout', function (Layout $layout = null) {
 			return $this->layoutFormService->getFormFactory($layout !== null ? $layout->getId() : null);
 		}, Form::TYPE_LARGE);
-		$admin->connectFormWithAction($form, $table->getAction('edit'));
 
-		// Toolbar
 		$toolbar = $admin->getNavbar();
-		$toolbar->addSection('new', 'Create', 'file');
-		$admin->connectFormWithNavbar($form, $toolbar->getSection('new'));
+		$newSection = $toolbar->addSection('new', 'Create', 'file');
 
-		$table->addActionEvent('delete', 'Delete')
-			->getElementPrototype()->class[] = 'ajax';
-		$admin->connectActionAsDelete($table->getAction('delete'));
+		$editAction = $table->addActionEvent('edit', 'Edit');
+		$editAction->getElementPrototype()->class[] = 'ajax';
+
+		$deleteAction = $table->addActionEvent('delete', 'Delete');
+		$deleteAction->getElementPrototype()->class[] = 'ajax';
+
+		$admin->connectFormWithNavbar($form, $newSection);
+		$admin->connectFormWithAction($form, $editAction);
+		$admin->connectActionAsDelete($deleteAction);
 
 		return $admin;
 	}

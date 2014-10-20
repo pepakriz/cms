@@ -52,29 +52,28 @@ class TagsTableFactory
 	{
 		$admin = $this->adminGridFactory->create($this->tagRepository);
 
-		// columns
 		$table = $admin->getTable();
 		$table->setTranslator($this->translator);
 		$table->addColumnText('name', 'Name')
 			->setSortable()
 			->getCellPrototype()->width = '100%';
 
-		$table->addActionEvent('edit', 'Edit')
-			->getElementPrototype()->class[] = 'ajax';
-
-		$form = $admin->addForm('tag', 'Tag', function (Tag $tag) {
+		$form = $admin->addForm('tag', 'Tag', function (Tag $tag = null) {
 			return $this->tagFormService->getFormFactory($tag !== null ? $tag->getId() : null);
 		}, Form::TYPE_LARGE);
-		$admin->connectFormWithAction($form, $table->getAction('edit'));
 
-		// Toolbar
 		$toolbar = $admin->getNavbar();
-		$toolbar->addSection('new', 'Create', 'file');
-		$admin->connectFormWithNavbar($form, $toolbar->getSection('new'));
+		$newSection = $toolbar->addSection('new', 'Create', 'file');
 
-		$table->addActionEvent('delete', 'Delete')
-			->getElementPrototype()->class[] = 'ajax';
-		$admin->connectActionAsDelete($table->getAction('delete'));
+		$editAction = $table->addActionEvent('edit', 'Edit');
+		$editAction->getElementPrototype()->class[] = 'ajax';
+
+		$deleteAction = $table->addActionEvent('delete', 'Delete');
+		$deleteAction->getElementPrototype()->class[] = 'ajax';
+
+		$admin->connectFormWithNavbar($form, $newSection);
+		$admin->connectFormWithAction($form, $editAction);
+		$admin->connectActionAsDelete($deleteAction);
 
 		return $admin;
 	}

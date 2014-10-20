@@ -52,7 +52,6 @@ class PagesTableFactory
 	{
 		$admin = $this->adminGridFactory->create($this->pageRepository);
 
-		// columns
 		$table = $admin->getTable();
 		$table->setTranslator($this->translator);
 		$table->setPrimaryKey('id');
@@ -61,22 +60,22 @@ class PagesTableFactory
 			->setSortable()
 			->getCellPrototype()->width = '100%';
 
-		$table->addActionEvent('edit', 'Edit')
-			->getElementPrototype()->class[] = 'ajax';
-
 		$form = $admin->addForm('page', 'Page', function (Page $page = null) {
 			return $this->pageFormService->getFormFactory($page !== null ? $page->getId() : null);
 		});
-		$admin->connectFormWithAction($form, $table->getAction('edit'), $admin::MODE_PLACE);
 
-		// Toolbar
 		$toolbar = $admin->getNavbar();
-		$toolbar->addSection('new', 'Create', 'file');
-		$admin->connectFormWithNavbar($form, $toolbar->getSection('new'), $admin::MODE_PLACE);
+		$newSection = $toolbar->addSection('new', 'Create', 'file');
 
-		$table->addActionEvent('delete', 'Delete')
-			->getElementPrototype()->class[] = 'ajax';
-		$admin->connectActionAsDelete($table->getAction('delete'));
+		$editAction = $table->addActionEvent('edit', 'Edit');
+		$editAction->getElementPrototype()->class[] = 'ajax';
+
+		$deleteAction = $table->addActionEvent('delete', 'Delete');
+		$deleteAction->getElementPrototype()->class[] = 'ajax';
+
+		$admin->connectFormWithNavbar($form, $newSection, $admin::MODE_PLACE);
+		$admin->connectFormWithAction($form, $editAction, $admin::MODE_PLACE);
+		$admin->connectActionAsDelete($deleteAction);
 
 		return $admin;
 	}
