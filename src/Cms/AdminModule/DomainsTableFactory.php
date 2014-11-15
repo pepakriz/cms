@@ -47,6 +47,9 @@ class DomainsTableFactory
 		$this->translator = $translator;
 	}
 
+	/**
+	 * @return \Venne\System\Components\AdminGrid\AdminGrid
+	 */
 	public function create()
 	{
 		$admin = $this->adminGridFactory->create($this->domainRepository);
@@ -57,7 +60,11 @@ class DomainsTableFactory
 
 		$table->addColumnText('domain', 'Domain')
 			->setSortable()
-			->getCellPrototype()->width = '100%';
+			->getCellPrototype()->width = '40%';
+
+		$table->addColumnText('name', 'Name')
+			->setSortable()
+			->getCellPrototype()->width = '60%';
 
 		$form = $admin->addForm('domain', 'Domain', function (Domain $domain = null) {
 			return $this->domainFormService->getFormFactory($domain !== null ? $domain->getDomain() : null);

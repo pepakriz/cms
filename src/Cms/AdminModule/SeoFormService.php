@@ -20,15 +20,15 @@ use Venne\Cms\TextPage\Page;
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
  */
-class PageFormService extends \Venne\System\DoctrineFormService
+class SeoFormService extends \Venne\System\DoctrineFormService
 {
 
 	public function __construct(
-		PageFormFactory $pageFormFactory,
+		SeoFormFactory $seoFormFactory,
 		EntityManager $entityManager,
 		EntityFormMapper $entityFormMapper
 	) {
-		parent::__construct($pageFormFactory, $entityManager, $entityFormMapper);
+		parent::__construct($seoFormFactory, $entityManager, $entityFormMapper);
 	}
 
 	/**

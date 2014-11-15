@@ -107,40 +107,15 @@ class PageRoute extends Route
 
 		$parameters = $appRequest->getParameters();
 
-		if (!array_key_exists('slug', $parameters)) {
+		if (!array_key_exists('slug', $parameters) || ($page = $this->findPage($parameters)) === null) {
 			return null;
 		}
 
-		try {
-			$qb = $this->pageRepository->createQueryBuilder('a')
-				->select('a.id, a.presenter, a.action')
-				->andWhere('a.url = :url')->setParameter('url', $parameters['slug']);
-
-			if ($this->countLanguages() > 1) {
-				$qb = $qb
-					->andWhere('a.language IS NULL OR a.language = :alias')
-					->setParameter('alias', $parameters['lang'] !== null ? $parameters['lang'] : $this->getDefaultLanguage());
-			}
-
-			if ($this->countDomains() > 1) {
-				$qb = $qb
-					->andWhere('a.domain IS NULL OR a.domain = :domain')
-					->setParameter('domain', $parameters['domain']);
-			}
-
-			$page = $qb
-				->getQuery()
-//				->useResultCache(true)
-				->getSingleResult();
-			$appRequest->setPresenterName($page['presenter']);
-			$appRequest->setParameters($parameters + array(
-					'pageId' => $page['id'],
-					'action' => $page['action'],
-				));
-
-		} catch (NoResultException $e) {
-			return null;
-		}
+		$appRequest->setPresenterName($page['presenter']);
+		$appRequest->setParameters($parameters + array(
+				'pageId' => $page['id'],
+				'action' => $page['action'],
+			));
 
 		return $appRequest;
 	}
@@ -153,14 +128,12 @@ class PageRoute extends Route
 	public function constructUrl(Request $appRequest, Url $refUrl)
 	{
 		$parameters = $appRequest->getParameters();
-		$pageId = $parameters['pageId'] instanceof Page ? $parameters['pageId']->getId() : $parameters['pageId'];
+
+		if (($pageUrl = $this->findUrl($parameters)) === null) {
+			return null;
+		}
+
 		unset($parameters['pageId']);
-		$pageUrl = $this->pageRepository->createQueryBuilder('a')
-			->select('a.url')
-			->andWhere('a.id = :id')->setParameter('id', $pageId)
-			->getQuery()
-//			->useResultCache(true)
-			->getSingleScalarResult();
 
 		$appRequest->setPresenterName(self::DEFAULT_MODULE . ':' . self::DEFAULT_PRESENTER);
 		$appRequest->setParameters(array(
@@ -180,6 +153,121 @@ class PageRoute extends Route
 	}
 
 	/**
+	 * @param $parameters
+	 * @return string|null
+	 */
+	private function findUrl($parameters)
+	{
+		$pageId = $parameters['pageId'] instanceof Page ? $parameters['pageId']->getId() : $parameters['pageId'];
+		$lang = isset($parameters['lang']) && $parameters['lang'] !== null ? $parameters['lang'] : $this->getDefaultLanguage();
+
+		$qb = $this->pageRepository->createQueryBuilder('a')
+			->select('a.url')
+			->andWhere('a.id = :id')->setParameter('id', $pageId);
+
+		if ($this->countLanguages() > 1) {
+			if ($lang === $this->getDefaultLanguage()) {
+				$qb = $qb
+					->andWhere('a.language IS NULL');
+			} else {
+				$qb = $qb
+					->andWhere('a.language = :alias')
+					->setParameter('alias', $lang === $this->getDefaultLanguage() ? null : $lang);
+			}
+		}
+
+		if ($this->countDomains() > 1) {
+			$qb = $qb
+				->andWhere('a.domain IS NULL OR a.domain = :domain')
+				->setParameter('domain', $parameters['domain']);
+		}
+
+		$url = $qb->getQuery()->getOneOrNullResult();
+
+		if ($url !== null) {
+			return $url['url'];
+		}
+
+		if ($this->countLanguages() < 2) {
+			return null;
+		}
+
+
+		$qb = $this->pageRepository->createQueryBuilder('a')
+			->select('t.url as tr_url, a.url')
+			->leftJoin('a.translations', 't')
+			->andWhere('a.language IS NULL')
+			->andWhere('a.id = :id')->setParameter('id', $pageId)
+			->andWhere('t.language = :language OR t.language IS NULL')->setParameter('language', $lang);
+
+		if ($this->countDomains() > 1) {
+			$qb = $qb
+				->andWhere('a.domain IS NULL OR a.domain = :domain')
+				->setParameter('domain', $parameters['domain']);
+		}
+
+		$url = $qb->getQuery()->getOneOrNullResult();
+
+		return isset($url['tr_url']) && $url['tr_url'] !== null ? $url['tr_url'] : $url['url'];
+	}
+
+	/**
+	 * @param $parameters
+	 * @return mixed[]|null
+	 */
+	private function findPage($parameters)
+	{
+		$lang = isset($parameters['lang']) && $parameters['lang'] !== null ? $parameters['lang'] : $this->getDefaultLanguage();
+
+		$qb = $this->pageRepository->createQueryBuilder('a')
+			->select('a.id, a.presenter, a.action')
+			->andWhere('a.url = :url')->setParameter('url', $parameters['slug']);
+
+		if ($this->countLanguages() > 1) {
+			if ($lang === $this->getDefaultLanguage()) {
+				$qb = $qb
+					->andWhere('a.language IS NULL');
+			} else {
+				$qb = $qb
+					->andWhere('a.language = :alias')
+					->setParameter('alias', $lang === $this->getDefaultLanguage() ? null : $lang);
+			}
+		}
+
+		if ($this->countDomains() > 1) {
+			$qb = $qb
+				->andWhere('a.domain IS NULL OR a.domain = :domain')
+				->setParameter('domain', $parameters['domain']);
+		}
+
+		$page = $qb->getQuery()->getOneOrNullResult();
+
+		if ($page !== null) {
+			return $page;
+		}
+
+		if ($this->countLanguages() < 2) {
+			return null;
+		}
+
+		$qb = $this->pageRepository->createQueryBuilder('a')
+			->select('a.id, a.presenter, a.action')
+			->leftJoin('a.translations', 't')
+			->andWhere('a.language IS NULL')
+			->andWhere('(t.url = :url AND t.language = :language) OR (t.url IS NULL AND a.url = :url)')
+			->setParameter('language', $lang)
+			->setParameter('url', $parameters['slug']);
+
+		if ($this->countDomains() > 1) {
+			$qb = $qb
+				->andWhere('a.domain IS NULL OR a.domain = :domain')
+				->setParameter('domain', $parameters['domain']);
+		}
+
+		return $qb->getQuery()->getOneOrNullResult();
+	}
+
+	/**
 	 * @return integer
 	 */
 	private function countLanguages()
@@ -188,7 +276,7 @@ class PageRoute extends Route
 			$this->countLanguages = $this->languageRepository->createQueryBuilder('a')
 				->select('COUNT(a.alias)')
 				->getQuery()
-//				->useResultCache(true)
+				->useResultCache(true)
 				->getSingleScalarResult();
 		}
 
@@ -204,7 +292,7 @@ class PageRoute extends Route
 			$this->countDomains = $this->domainRepository->createQueryBuilder('a')
 				->select('COUNT(a.domain)')
 				->getQuery()
-//				->useResultCache(true)
+				->useResultCache(true)
 				->getSingleScalarResult();
 		}
 
@@ -221,7 +309,7 @@ class PageRoute extends Route
 				->select('l.alias')
 				->join('l.domains', 'd')
 				->getQuery()
-//				->useResultCache(true)
+				->useResultCache(true)
 				->getSingleScalarResult();
 		}
 
@@ -237,7 +325,7 @@ class PageRoute extends Route
 			$this->defaultDomain = $this->domainRepository->createQueryBuilder('a')
 				->select('a.domain')
 				->getQuery()
-//				->useResultCache(true)
+				->useResultCache(true)
 				->getSingleScalarResult();
 		}
 

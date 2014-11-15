@@ -51,15 +51,13 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 
 	use \Venne\Doctrine\Entities\IdentifiedEntityTrait;
 
-	const CHANGE_URL = 1;
+	const CHANGE_PARENT = 1;
 
-	const CHANGE_PARENT = 2;
+	const CHANGE_POSITION = 2;
 
-	const CHANGE_POSITION = 4;
+	const CHANGE_DOMAIN = 4;
 
-	const CHANGE_DOMAIN = 8;
-
-	const CHANGE_LAYOUT = 16;
+	const CHANGE_LAYOUT = 8;
 
 	/** @var string[] */
 	private static $robotsValues = array(
@@ -124,12 +122,12 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	private $domain;
 
 	/**
-	 * @var \Venne\Cms\Language
+	 * @var \Venne\Cms\Language|null
 	 *
 	 * @ORM\ManyToOne(targetEntity="\Venne\Cms\Language")
 	 * @ORM\JoinColumn(name="language_id", referencedColumnName="alias")
 	 */
-	protected $language;
+	private $language;
 
 	/**
 	 * @var \Venne\Cms\Layout
@@ -154,12 +152,12 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	protected $translations;
 
 	/**
-	 * @var \Venne\Cms\Page
+	 * @var \Venne\Cms\Page|null
 	 *
 	 * @ORM\ManyToOne(targetEntity="\Venne\Cms\Page", inversedBy="slavePages", cascade={"persist"})
 	 * @ORM\JoinColumn(onDelete="CASCADE")
 	 */
-	protected $masterPage;
+	private $masterPage;
 
 	/**
 	 * @var \Venne\Cms\Page[]|\Doctrine\Common\Collections\ArrayCollection
@@ -350,12 +348,12 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	 *
 	 * @ORM\Column(type="string")
 	 */
-	protected $class;
+	private $class;
 
 	/**
 	 * @var \Venne\Cms\ExtendedPage
 	 */
-	protected $extendedPage;
+	private $extendedPage;
 
 	/**
 	 * @var callable
@@ -536,7 +534,7 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 			$this->setPosition(1);
 		}
 
-		if (($this->changes & (self::CHANGE_DOMAIN | self::CHANGE_PARENT | self::CHANGE_URL)) !== 0) {
+		if (($this->changes & (self::CHANGE_DOMAIN | self::CHANGE_PARENT)) !== 0) {
 			$this->generateUrl(true);
 		}
 
@@ -570,6 +568,14 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	}
 
 	/**
+	 * @return \Venne\Cms\Page|null
+	 */
+	public function getMasterPage()
+	{
+		return $this->masterPage;
+	}
+
+	/**
 	 * @param \Venne\Cms\Domain $domain
 	 */
 	public function setDomain(Domain $domain = null)
@@ -580,6 +586,7 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 
 		$this->domain = $domain;
 		$this->appendChange(self::CHANGE_DOMAIN);
+		dump('ookk');
 	}
 
 	/**
@@ -588,6 +595,22 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	public function getDomain()
 	{
 		return $this->domain;
+	}
+
+	/**
+	 * @param Language|null $language
+	 */
+	public function setLanguage(Language $language = null)
+	{
+		$this->language = $language;
+	}
+
+	/**
+	 * @return Language|null
+	 */
+	public function getLanguage()
+	{
+		return $this->language;
 	}
 
 	/**
@@ -899,7 +922,7 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	public function setLocalUrl($localUrl)
 	{
 		$this->setTranslatedValue('localUrl', $localUrl);
-		$this->appendChange(self::CHANGE_URL);
+		$this->generateUrl(true);
 	}
 
 	/**
@@ -964,19 +987,35 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	}
 
 	/**
-	 * @param string $keywords
+	 * @param string|null $keywords
 	 */
 	public function setKeywords($keywords)
 	{
-		$this->setTranslatedValue('keywords', $keywords);
+		$this->setTranslatedValue('keywords', $keywords !== null ? $keywords : null);
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getKeywords()
 	{
 		return $this->getTranslatedValue('keywords');
+	}
+
+	/**
+	 * @return null|string
+	 */
+	public function getDescription()
+	{
+		$this->getTranslatedValue('description');
+	}
+
+	/**
+	 * @param null|string $description
+	 */
+	public function setDescription($description)
+	{
+		$this->setTranslatedValue('description', $description !== null ? $description : null);
 	}
 
 	/**
@@ -1097,6 +1136,14 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getExtendedPageClass()
+	{
+		return $this->class;
+	}
+
+	/**
 	 * @internal
 	 */
 	public function removeFromPosition()
@@ -1185,10 +1232,10 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	 */
 	protected function getTranslatedValue($field, Language $language = null)
 	{
-		$language = $language ?: $this->locale;
+		$language = $language !== null ? $language : $this->locale;
 
-		if ($language && $this->translations[$language->id]) {
-			if (($ret = $this->translations[$language->id]->{$field}) !== null) {
+		if ($language != null && $this->translations[$language->getAlias()]) {
+			if (($ret = $this->translations[$language->getAlias()]->{$field}) !== null) {
 				return $ret;
 			}
 		}
@@ -1203,17 +1250,17 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	 */
 	protected function setTranslatedValue($field, $value, Language $language = null)
 	{
-		$language = $language ?: $this->locale;
+		$language = $language !== null ? $language : $this->locale;
 
-		if ($language) {
-			if (!isset($this->translations[$language->id])) {
+		if ($language !== null) {
+			if (!isset($this->translations[$language->getAlias()])) {
 				if ($value === null || $this->{$field} === $value) {
 					return;
 				}
 
-				$this->translations[$language->id] = new PageTranslation($this, $language);
+				$this->translations[$language->getAlias()] = new PageTranslation($this, $language);
 			}
-			$this->translations[$language->id]->{$field} = $value ?: null;
+			$this->translations[$language->getAlias()]->{$field} = $value ?: null;
 		} else {
 			$this->{$field} = $value;
 		}
@@ -1264,6 +1311,14 @@ class Page extends \Kdyby\Doctrine\Entities\BaseEntity
 	public static function getRobotsValues()
 	{
 		return self::$robotsValues;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isMaster()
+	{
+		return $this->masterPage === null;
 	}
 
 }

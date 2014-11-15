@@ -8,6 +8,16 @@ services:
 	- Venne\Cms\AdminModule\PageFormService
 	- Venne\Cms\AdminModule\PagesTableFactory
 
+	- Venne\Cms\AdminModule\SeoFormFactory (@system.admin.ajaxFormFactory)
+	- Venne\Cms\AdminModule\SeoFormService
+
+	-
+		class: Venne\Cms\AdminModule\Insite\InsiteControl
+		implement: Venne\Cms\AdminModule\Insite\InsiteControlFactory
+		arguments: [pageId: %pageId%]
+		parameters: [pageId: pageId]
+		inject: true
+
 	- Venne\Cms\PageService
 
 	- Venne\Cms\AdminModule\EditPresenter

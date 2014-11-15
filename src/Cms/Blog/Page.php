@@ -9,12 +9,26 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Cms\TextPage\FrontModule;
+namespace Venne\Cms\Blog;
+
+use Doctrine\ORM\Mapping as ORM;
+use Kdyby\Doctrine\Entities\BaseEntity;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="page_blog")
  */
-class DefaultPresenter extends \Venne\Cms\FrontModule\PagePresenter
+class Page extends \Venne\Cms\ExtendedPage
 {
+
+	/**
+	 * @return string
+	 */
+	protected function getPresenterName()
+	{
+		return 'Front:Blog:Default';
+	}
 
 }

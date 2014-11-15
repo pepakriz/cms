@@ -36,7 +36,7 @@ class PageTranslation extends \Kdyby\Doctrine\Entities\BaseEntity
 	 * @var \Venne\Cms\Language
 	 *
 	 * @ORM\ManyToOne(targetEntity="\Venne\Cms\Language")
-	 * @ORM\JoinColumn(name="language_id", referencedColumnName="alias", onDelete="CASCADE")
+	 * @ORM\JoinColumn(name="language", referencedColumnName="alias", onDelete="CASCADE")
 	 */
 	protected $language;
 

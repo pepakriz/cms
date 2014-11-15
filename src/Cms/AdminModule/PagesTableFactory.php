@@ -15,6 +15,7 @@ use Doctrine\ORM\Query;
 use Kdyby\Doctrine\EntityManager;
 use Nette\Localization\ITranslator;
 use Venne\Cms\Page;
+use Venne\Cms\PageManager;
 use Venne\System\Components\AdminGrid\IAdminGridFactory;
 
 /**
@@ -32,6 +33,9 @@ class PagesTableFactory
 	/** @var \Venne\System\Components\AdminGrid\IAdminGridFactory */
 	private $adminGridFactory;
 
+	/** @var \Venne\Cms\PageManager */
+	private $pageManager;
+
 	/** @var \Nette\Localization\ITranslator */
 	private $translator;
 
@@ -39,11 +43,13 @@ class PagesTableFactory
 		EntityManager $entityManager,
 		PageFormService $pageFormService,
 		IAdminGridFactory $adminGridFactory,
+		PageManager $pageManager,
 		ITranslator $translator
 	) {
 		$this->pageRepository = $entityManager->getRepository(Page::class);
 		$this->pageFormService = $pageFormService;
 		$this->adminGridFactory = $adminGridFactory;
+		$this->pageManager = $pageManager;
 		$this->translator = $translator;
 	}
 
@@ -66,15 +72,28 @@ class PagesTableFactory
 		$toolbar = $admin->getNavbar();
 		$newSection = $toolbar->addSection('new', 'Create', 'file');
 
-		$editAction = $table->addActionEvent('edit', 'Edit');
+		$editAction = $table->addActionHref('edit', 'Edit');
 		$editAction->getElementPrototype()->class[] = 'ajax';
+		$editAction->setCustomHref(function ($id) use ($admin) {
+			$admin->getPresenter()->link(':Admin:Cms:Edit:', array(
+				'pageId' => $id,
+				'do' => 'changePage',
+			));
+		});
 
 		$deleteAction = $table->addActionEvent('delete', 'Delete');
 		$deleteAction->getElementPrototype()->class[] = 'ajax';
 
 		$admin->connectFormWithNavbar($form, $newSection, $admin::MODE_PLACE);
-		$admin->connectFormWithAction($form, $editAction, $admin::MODE_PLACE);
 		$admin->connectActionAsDelete($deleteAction);
+
+		foreach ($this->pageManager->getPageTypes() as $type => $value) {
+			$admin->connectFormWithNavbar(
+				$form,
+				$newSection->addSection(str_replace('\\', '_', $type), $value->getName()),
+				$admin::MODE_PLACE
+			);
+		}
 
 		return $admin;
 	}

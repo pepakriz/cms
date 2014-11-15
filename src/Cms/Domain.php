@@ -32,11 +32,18 @@ class Domain extends \Kdyby\Doctrine\Entities\BaseEntity
 	private $domain;
 
 	/**
+	 * @var string
+	 *
+	 * @ORM\Column(type="string")
+	 */
+	private $name;
+
+	/**
 	 * @var \Venne\Cms\Page
 	 *
 	 * @ORM\OneToOne(targetEntity="\Venne\Cms\Page")
 	 */
-	protected $mainPage;
+	private $mainPage;
 
 	/**
 	 * @var \Venne\Cms\Language
@@ -44,35 +51,35 @@ class Domain extends \Kdyby\Doctrine\Entities\BaseEntity
 	 * @ORM\ManyToOne(targetEntity="\Venne\Cms\Language", inversedBy="domains")
 	 * @ORM\JoinColumn(name="language_id", nullable=false, referencedColumnName="alias")
 	 */
-	protected $defaultLanguage;
+	private $defaultLanguage;
 
 	/**
-	 * @var string
+	 * @var string|null
 	 *
 	 * @ORM\Column(type="string", nullable=true)
 	 */
-	protected $defaultDescription;
+	private $defaultDescription;
 
 	/**
-	 * @var string
+	 * @var string|null
 	 *
 	 * @ORM\Column(type="string", nullable=true)
 	 */
-	protected $defaultKeywords;
+	private $defaultKeywords;
 
 	/**
-	 * @var string
+	 * @var string|null
 	 *
 	 * @ORM\Column(type="string", nullable=true)
 	 */
-	protected $defaultAuthor;
+	private $defaultAuthor;
 
 	/**
-	 * @var string
+	 * @var string|null
 	 *
 	 * @ORM\Column(type="string")
 	 */
-	protected $titleMask = '%t | %n';
+	private $titleMask = '%t | %n';
 
 	/**
 	 * @param string $domain
@@ -90,6 +97,22 @@ class Domain extends \Kdyby\Doctrine\Entities\BaseEntity
 		return $this->domain;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
+
+	/**
+	 * @param string $name
+	 */
+	public function setName($name)
+	{
+		$this->name = (string) $name;
+	}
+
 	public function setMainPage(Page $page)
 	{
 		if ($this->mainPage && $this->mainPage !== $page) {
@@ -98,6 +121,91 @@ class Domain extends \Kdyby\Doctrine\Entities\BaseEntity
 
 		$this->mainPage = $page;
 		$this->mainPage->mainRoute->setDomain($this);
+	}
+
+	/**
+	 * @return Page
+	 */
+	public function getMainPage()
+	{
+		return $this->mainPage;
+	}
+
+	public function setDefaultLanguage(Language $defaultLanguage)
+	{
+		$this->defaultLanguage = $defaultLanguage;
+	}
+
+	/**
+	 * @return Language
+	 */
+	public function getDefaultLanguage()
+	{
+		return $this->defaultLanguage;
+	}
+
+	/**
+	 * @param string|null $defaultAuthor
+	 */
+	public function setDefaultAuthor($defaultAuthor)
+	{
+		$this->defaultAuthor = $defaultAuthor ?: null;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getDefaultAuthor()
+	{
+		return $this->defaultAuthor;
+	}
+
+	/**
+	 * @param string|null $defaultDescription
+	 */
+	public function setDefaultDescription($defaultDescription)
+	{
+		$this->defaultDescription = $defaultDescription ?: null;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getDefaultDescription()
+	{
+		return $this->defaultDescription;
+	}
+
+	/**
+	 * @param string|null $defaultKeywords
+	 */
+	public function setDefaultKeywords($defaultKeywords)
+	{
+		$this->defaultKeywords = $defaultKeywords ?: null;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getDefaultKeywords()
+	{
+		return $this->defaultKeywords;
+	}
+
+	/**
+	 * @param null|string $titleMask
+	 */
+	public function setTitleMask($titleMask)
+	{
+		$this->titleMask = (string) $titleMask;
+	}
+
+	/**
+	 * @return null|string
+	 */
+	public function getTitleMask()
+	{
+		return $this->titleMask;
 	}
 
 }

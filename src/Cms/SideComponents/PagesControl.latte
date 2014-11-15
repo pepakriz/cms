@@ -1,20 +1,22 @@
-<div class="btn-toolbar">
-	<div class="btn-group">
-		<a n:if="$presenter->isAuthorized(':Admin:Cms:Content:')" class="ajax btn btn-default"
-		   href="{plink :Admin:Cms:Content: key=>NULL}"><span	class="glyphicon glyphicon-list-alt"></span> {_'Show in table'}</a>
+{snippet content}
+	<div class="btn-toolbar">
+		<div class="btn-group">
+			<a n:if="$presenter->isAuthorized(':Admin:Cms:Content:')" class="ajax btn btn-default"
+			   href="{plink :Admin:Cms:Content: key=>NULL}"><span	class="glyphicon glyphicon-list-alt"></span> {_'Show in table'}</a>
+		</div>
+		<div class="btn-group pull-right">
+			<button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-file"></span> {_'Create new'} <span class="caret"></span></button>
+			<ul class="dropdown-menu">
+				<li><a class="ajax"
+					   href="{plink :Admin:Files:Default: do=>fileBrowser-dir, id=>fileBrowser-navbar-directory}">{_'New directory'}</a></li>
+				<li><a class="ajax"
+					   href="{plink :Admin:Files:Default: do=>fileBrowser-dir, id=>fileBrowser-navbar-upload}">{_'Upload file'}</a></li>
+			</ul>
+		</div>
 	</div>
-	<div class="btn-group pull-right">
-		<button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-file"></span> {_'Create new'} <span class="caret"></span></button>
-		<ul class="dropdown-menu">
-			<li><a class="ajax"
-				   href="{plink :Admin:Files:Default: do=>fileBrowser-dir, id=>fileBrowser-navbar-directory}">{_'New directory'}</a></li>
-			<li><a class="ajax"
-				   href="{plink :Admin:Files:Default: do=>fileBrowser-dir, id=>fileBrowser-navbar-upload}">{_'Upload file'}</a></li>
-		</ul>
-	</div>
-</div>
 
-{control browser}
+	{control browser}
+{/snippet}
 
 {*<ul class="nav nav-tabs" role="tablist">*}
 	{*<li class="active"><a href="#home" role="tab" data-toggle="tab">Home</a></li>*}

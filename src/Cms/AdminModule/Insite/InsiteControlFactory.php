@@ -9,12 +9,18 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Cms\TextPage\FrontModule;
+namespace Venne\Cms\AdminModule\Insite;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
  */
-class DefaultPresenter extends \Venne\Cms\FrontModule\PagePresenter
+interface InsiteControlFactory
 {
+
+	/**
+	 * @param integer $pageId
+	 * @return \Venne\Cms\AdminModule\Insite\InsiteControl
+	 */
+	public function create($pageId);
 
 }

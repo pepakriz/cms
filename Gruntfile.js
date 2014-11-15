@@ -37,7 +37,7 @@ module.exports = function(grunt) {
 		cssmin: {
 			combine: {
 				files: {
-					'Resources/public/css/application.min.css': ['Resources/public/css/application.css']
+					'Resources/public/css/breadcrumb.min.css': ['Resources/public/css/breadcrumb.css']
 				}
 			},
 			minify: {

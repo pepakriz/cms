@@ -9,12 +9,17 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Cms\TextPage\FrontModule;
+namespace Venne\Cms\DI;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
  */
-class DefaultPresenter extends \Venne\Cms\FrontModule\PagePresenter
+interface PageTypeProvider
 {
+
+	/**
+	 * @return \Venne\Cms\DI\PageType[]
+	 */
+	public function getPageTypes();
 
 }

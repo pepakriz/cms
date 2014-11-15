@@ -9,12 +9,17 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Cms\TextPage\FrontModule;
+namespace Venne\Cms\Components;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
  */
-class DefaultPresenter extends \Venne\Cms\FrontModule\PagePresenter
+interface NavigationControlFactory
 {
+
+	/**
+	 * @return \Venne\Cms\Components\NavigationControl
+	 */
+	public function create();
 
 }

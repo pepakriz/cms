@@ -9,12 +9,17 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Cms\TextPage\FrontModule;
+namespace Venne\Cms;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
  */
-class DefaultPresenter extends \Venne\Cms\FrontModule\PagePresenter
+interface SectionIcon
 {
+
+	/**
+	 * @return string
+	 */
+	public function getIcon();
 
 }

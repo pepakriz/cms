@@ -9,12 +9,18 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Cms\TextPage\FrontModule;
+namespace Venne\Cms;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
  */
-class DefaultPresenter extends \Venne\Cms\FrontModule\PagePresenter
+interface SectionFactory
 {
+
+	/**
+	 * @param integer $pageId
+	 * @return \Nette\Application\UI\Control
+	 */
+	public function create($pageId);
 
 }

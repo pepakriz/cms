@@ -2,12 +2,22 @@
 	{include ../#header.latte}
 {/define}
 
-{define toolbar}
-{/define}
+{block toolbar}
+{/block}
 
 {block breadcrumb}
 	{include #parent}
 	<li class="active">{include #header}</li>
+{/block}
+
+{block breadcrumb-container}
+	<div class="row">
+		<div class="col-sm-12">
+			{include #parent}
+		</div>
+	</div>
+
+	{include ../#breadcrumb.latte}
 {/block}
 
 {block content}

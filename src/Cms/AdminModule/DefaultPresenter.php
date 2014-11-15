@@ -32,6 +32,9 @@ class DefaultPresenter extends Presenter
 		$this->tableFactory = $tableFactory;
 	}
 
+	/**
+	 * @return \Venne\System\Components\AdminGrid\AdminGrid
+	 */
 	protected function createComponentTable()
 	{
 		return $this->tableFactory->create();

@@ -24,7 +24,7 @@ class ContentMacro extends \Nette\Object implements IMacro
 {
 
 	/** @var string */
-	private $contentTypes = array('text', 'notation', 'name');
+	private $contentTypes = array('text', 'notation', 'name', 'domain');
 
 	public function initialize()
 	{

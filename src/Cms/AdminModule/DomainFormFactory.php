@@ -38,6 +38,9 @@ class DomainFormFactory implements IFormFactory
 		$form->addGroup();
 		$form->addText('domain', 'Domain')
 			->addRule($form::FILLED);
+		$form->addText('name', 'Name')
+			->addRule($form::FILLED);
+
 		$form->addSelect('defaultLanguage', 'Default language')
 			->setTranslator()
 			->setOption(IComponentMapper::ITEMS_TITLE, 'name');

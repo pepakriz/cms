@@ -1,0 +1,42 @@
+<div class="row">
+	<div class="col-sm-12">
+		<div class="btn-group btn-breadcrumb">
+			<a n:href=":Admin:Cms:Content:default" class="btn btn-default{if $presenter->getName() === 'Admin:Cms:Content'} disabled{/if}"><i class="fa fa-home"></i>&nbsp;&nbsp;{_'List'}</a>
+
+			{define #breadcrumb-item}
+			{if $item->parent !== null}{include #breadcrumb-item item => $item->parent}{/if}
+				<a n:href="changePage! pageId => $item->id" class="btn{if $item->master} btn-default{else} btn-primary btn-xs{/if}{if $item === $page} disabled{/if}">{$item->name}</a>
+			{/define}
+
+			{if isset($page)}{include #breadcrumb-item item => $page}{/if}
+		</div>
+
+		<div n:if="isset($page)" class="btn-toolbar pull-right" n:snippet="contentToolbar">
+			<div class="btn-group">
+
+				<div class="btn-group">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+						<i class="glyphicon glyphicon-flag"></i> {$contentLanguage} <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu" n:inner-foreach="$languages as $language">
+						<li><a n:href="changeLanguage! contentLanguageId => $language->alias" class="ajax">{$language}</a></li>
+					</ul>
+				</div>
+
+				<div class="btn-group">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+						<i class="glyphicon glyphicon-random"></i> {_'Revision'} <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a href="#">Action</a></li>
+						<li><a href="#">Another action</a></li>
+						<li><a href="#">Something else here</a></li>
+						<li class="divider"></li>
+						<li><a href="#">Separated link</a></li>
+					</ul>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

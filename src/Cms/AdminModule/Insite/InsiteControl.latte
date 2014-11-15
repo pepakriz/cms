@@ -1,0 +1,138 @@
+{if isset($iframe)}
+	<html>
+	<head>
+		{$presenter->getComponent('adminJs')->render()}
+	</head>
+
+	<body>
+	</body>
+
+
+	<script type="text/javascript">
+		$(function () {
+			$('body').load({plink :Front:TextPage:Default: pageId => $presenter->pageId, venneCmsEditation => true}, function () {
+				$('html').append('<script src="{path @venne.cms/vendor/ckeditor/ckeditor.js}"><\/script>');
+				CKEDITOR.plugins.add( 'simplebox', {
+					requires: 'widget',
+					icons: 'simplebox',
+					init: function( editor ) {
+						editor.widgets.add( 'simplebox', {
+							button: 'Create a simple box',
+							template:
+							'<div class="venne-cms-content">content' +
+							'</div>',
+							editables: {
+								content: {
+									selector: '#content-1'
+								}
+							},
+							allowedContent: 'div(!content);',
+							requiredContent: 'div(content)',
+							upcast: function( element ) {
+								return element.hasClass( 'content' );
+							}
+						} );
+					}
+				});
+
+				$('*[data-venne-cms-content]').each(function () {
+					var $this = $(this);
+					var type = $this.attr('data-venne-cms-content-type');
+					var content = $this.attr('data-venne-cms-content');
+
+					if (type !== 'text' && $('*[data-venne-cms-content-type=' + type + ']').length > 1) {
+						$(this).on('DOMCharacterDataModified', function () {
+							var $this = $(this);
+							var type = $this.attr('data-venne-cms-content-type');
+							var html = $this.html();
+
+							$('*[data-venne-cms-content-type=' + type + ']').each(function () {
+								$(this).html(html);
+							});
+						});
+					}
+					if (type === 'text' && $('*[data-venne-cms-content=' + content + ']').length > 1) {
+						$(this).on('DOMCharacterDataModified', function () {
+							var $this = $(this);
+							var content = $this.attr('data-venne-cms-content');
+							var html = $this.html();
+
+							$('*[data-venne-cms-content=' + content + ']').each(function () {
+								$(this).html(html);
+							});
+						});
+					}
+				});
+
+				CKEDITOR.on('instanceCreated', function (event) {
+					var editor = event.editor;
+					var element = editor.element;
+					var url = {plink :Admin:Files:Default:default browserMode => true|noescape};
+
+					editor.config.filebrowserBrowseUrl = url;
+					editor.config.filebrowserImageBrowseUrl = url;
+					editor.config.filebrowserWindowWidth = '1024';
+					editor.config.filebrowserWindowHeight = '768';
+					editor.config.height = 550;
+
+					//if ( element.is( 'h1', 'h2', 'h3' ) || element.getAttribute( 'id' ) == 'taglist' ) {
+					editor.on('configLoaded', function () {
+
+						editor.config.extraPlugins = 'simplebox';
+
+//					editor.config.toolbarGroups = [
+//						{ name: 'editing', groups: ['basicstyles', 'links']},
+//						{ name: 'undo'},
+//						{ name: 'clipboard', groups: ['selection', 'clipboard']},
+//						{ name: 'about'}
+//					];
+					});
+					//}
+				});
+			});
+		});
+	</script>
+	</html>
+
+
+{else}
+	{if $preview}
+		<iframe src="{plink :Front:TextPage:Default: pageId => $pageId}" style="width: 100%; height: 900px; border: 0;border-radius: 4px;" />
+
+	{else}
+		<div class="hidden">{control form}</div>
+		<button type="button" id="save" class="btn btn-primary pull-right">{_'Save'}</button>
+		<iframe id="venne-iframe" src="{link iframe!}" style="width: 100%; height: 900px; border: 0;border-radius: 4px;" />
+
+		<script>
+			$(function () {
+				$('#save').on('click', function () {
+					var all = '';
+					var data = '';
+
+					if ($("#venne-iframe").length < 1) {
+						return;
+					}
+
+					$("#venne-iframe").contents().find("[data-venne-cms-content]").each(function() {
+						var $this = $(this);
+						var type = $this.data('venne-cms-content-type');
+
+						if (type === 'text') {
+							if ($this.data('venne-cms-content') === '') {
+								all = $this.html();
+							} else {
+								data += '\n<div id="venne-cms-content-' + $this.data('venne-cms-content') + '">' + $this.html() + '</div>\n';
+							}
+						} else {
+							$('#frm-sectionControl-page-' + type).val($this.html());
+						}
+					});
+
+					$('#frm-sectionControl-form-page-text').val(all + '\n' + data);
+					$('#frm-sectionControl-form-_submit').click();
+				});
+			});
+		</script>
+	{/if}
+{/if}

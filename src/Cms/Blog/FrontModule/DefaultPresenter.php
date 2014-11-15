@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Cms\TextPage\FrontModule;
+namespace Venne\Cms\Blog\FrontModule;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>

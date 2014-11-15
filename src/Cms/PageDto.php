@@ -18,8 +18,23 @@ namespace Venne\Cms;
  * @property-read string $name
  * @property-read string|null $notation
  * @property-read string $text
+ * @property-read string $domain
+ * @property-read string $navigationTitle
+ * @property-read string $url
+ * @property-read boolean $showInNavigation
  */
 class PageDto extends \Venne\DataTransfer\DataTransferObject
 {
+
+	public function getDomain()
+	{
+		$domain = $this->getRawValue('domain');
+
+		if (is_string($domain)) {
+			return $domain;
+		}
+
+		return $domain !== null ? $domain->getName() : '';
+	}
 
 }
